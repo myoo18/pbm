@@ -48,7 +48,9 @@ PARK_FACTORS = {
     "kauffman stadium":         0.96,
     "target field":             0.95,
     "minute maid park":         0.95,
+    "daikin park":              0.95,   # HOU (renamed from Minute Maid)
     "dodger stadium":           0.95,
+    "uniqlo field at dodger stadium": 0.95,  # LAD (renamed)
     "citi field":               0.94,
     "busch stadium":            0.93,
     "tropicana field":          0.92,
@@ -142,18 +144,33 @@ def get_roster_player_teams(season: int) -> dict[str, str]:
     Used to correctly assign opposing pitchers in scoring.
     """
     try:
-        resp = requests.get(
-            f"{MLB_STATS_API}/sports/1/players",
-            params={"season": season, "fields": "people,fullName,currentTeam,id"},
+        # Step 1: build team id → name map
+        t_resp = requests.get(
+            f"{MLB_STATS_API}/teams",
+            params={"sportId": 1, "season": season},
             timeout=15,
         )
-        resp.raise_for_status()
+        t_resp.raise_for_status()
+        team_id_to_name = {
+            t["id"]: t["name"]
+            for t in t_resp.json().get("teams", [])
+        }
+
+        # Step 2: fetch all players and map to team name via id
+        p_resp = requests.get(
+            f"{MLB_STATS_API}/sports/1/players",
+            params={"season": season},
+            timeout=15,
+        )
+        p_resp.raise_for_status()
         result = {}
-        for person in resp.json().get("people", []):
-            name = person.get("fullName", "")
-            team = person.get("currentTeam", {}).get("name", "")
+        for person in p_resp.json().get("people", []):
+            name    = person.get("fullName", "")
+            team_id = person.get("currentTeam", {}).get("id")
+            team    = team_id_to_name.get(team_id, "")
             if name and team:
                 result[name] = team
+
         print(f"  Loaded {len(result)} player-team mappings from roster API")
         return result
     except Exception as e:
@@ -330,3 +347,19 @@ def get_pitcher_features(pitcher_name: str, as_of: str) -> dict:
 
 def get_park_factor(venue: str) -> float:
     return PARK_FACTORS.get(venue.strip().lower(), 1.00)
+
+
+# ── Calibrated model wrapper (defined here so both train_model.py and
+#    baseball_market_analysis.py can unpickle the saved model) ─────────────────
+
+class CalibratedXGB:
+    """XGBoost model + isotonic calibrator. Keeps predict_proba interface."""
+    def __init__(self, model, calibrator):
+        self.estimator  = model
+        self.calibrator = calibrator
+
+    def predict_proba(self, X):
+        import numpy as np
+        raw = self.estimator.predict_proba(X)[:, 1]
+        cal = self.calibrator.predict(raw)
+        return np.column_stack([1 - cal, cal])

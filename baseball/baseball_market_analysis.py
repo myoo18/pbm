@@ -39,6 +39,7 @@ from feature_builder import (
     get_park_factor,
     get_game_details_today,
     get_roster_player_teams,
+    CalibratedXGB,  # must be imported so joblib can unpickle the model
 )
 
 warnings.filterwarnings("ignore")
@@ -52,7 +53,7 @@ SPORT      = "baseball_mlb"
 TODAY      = date.today().strftime("%Y-%m-%d")
 MODEL_PATH = Path(__file__).parent / "hr_model.pkl"
 
-BOOKS   = ["draftkings", "fanduel", "betmgm", "caesars", "bet365"]
+BOOKS   = ["betrivers", "bovada", "betonlineag"]
 MARKETS = ["batter_home_runs"]
 
 EDGE_THRESHOLD = 5.0

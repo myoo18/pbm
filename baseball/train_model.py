@@ -23,6 +23,7 @@ import numpy as np
 from sklearn.metrics import (
     roc_auc_score, log_loss, brier_score_loss, average_precision_score,
 )
+from sklearn.isotonic import IsotonicRegression
 import xgboost as xgb
 import joblib
 import warnings
@@ -78,7 +79,9 @@ PARK_FACTORS = {
     "kauffman stadium":         0.96,
     "target field":             0.95,
     "minute maid park":         0.95,
+    "daikin park":              0.95,
     "dodger stadium":           0.95,
+    "uniqlo field at dodger stadium": 0.95,
     "citi field":               0.94,
     "busch stadium":            0.93,
     "tropicana field":          0.92,
@@ -372,6 +375,9 @@ def build_training_data(seasons: list[int]) -> pd.DataFrame:
     return pd.DataFrame(all_rows)
 
 
+from feature_builder import CalibratedXGB
+
+
 def assess(model, X_tr, y_tr, X_te, y_te, df, train_mask):
     """Comprehensive model assessment — calibration, overfit, thresholds."""
     preds_te = model.predict_proba(X_te)[:, 1]
@@ -383,14 +389,16 @@ def assess(model, X_tr, y_tr, X_te, y_te, df, train_mask):
     ll_tr   = log_loss(y_tr, preds_tr)
     brier   = brier_score_loss(y_te, preds_te)
     pr_auc  = average_precision_score(y_te, preds_te)
-    n_trees = model.best_iteration + 1 if hasattr(model, "best_iteration") else model.n_estimators
+    # Unwrap calibration wrapper if present
+    base = getattr(model, "estimator", model)
+    n_trees = base.best_iteration + 1 if hasattr(base, "best_iteration") else getattr(base, "n_estimators", "?")
 
     print("\n" + "=" * 72)
     print("MODEL ASSESSMENT")
     print("=" * 72)
 
     print("\n--- CORE METRICS ---")
-    print(f"  Trees used      : {n_trees} / {model.n_estimators}")
+    print(f"  Trees used      : {n_trees} / {getattr(base, 'n_estimators', '?')}")
     print(f"  Train AUC-ROC   : {auc_tr:.4f}")
     print(f"  Test  AUC-ROC   : {auc_te:.4f}   (target > 0.65)")
     print(f"  AUC overfit gap : {auc_tr - auc_te:.4f}   (good if < 0.05)")
@@ -440,7 +448,7 @@ def assess(model, X_tr, y_tr, X_te, y_te, df, train_mask):
 
     print("\n--- TOP 15 FEATURES (by gain) ---")
     imp = pd.Series(
-        model.get_booster().get_score(importance_type="gain"),
+        base.get_booster().get_score(importance_type="gain"),
         name="gain"
     ).sort_values(ascending=False)
     for feat, val in imp.head(15).items():
@@ -462,11 +470,15 @@ def train(df: pd.DataFrame):
 
     print(f"\nTrain rows : {len(X_tr):,}")
     print(f"Test rows  : {len(X_te):,}")
-    print(f"HR rate    : {y_tr.mean():.3f} train / {y_te.mean():.3f} test")
+    hr_rate = float(y_tr.mean())
+    print(f"HR rate    : {hr_rate:.3f} train / {y_te.mean():.3f} test")
 
-    scale = float((y_tr == 0).sum() / max((y_tr == 1).sum(), 1))
+    # Split train into fit / calibration (80/20 by time — no shuffling)
+    cal_cut   = int(len(X_tr) * 0.8)
+    X_fit,  X_cal  = X_tr.iloc[:cal_cut],  X_tr.iloc[cal_cut:]
+    y_fit,  y_cal  = y_tr.iloc[:cal_cut],  y_tr.iloc[cal_cut:]
 
-    model = xgb.XGBClassifier(
+    base_model = xgb.XGBClassifier(
         n_estimators=1200,
         max_depth=5,
         learning_rate=0.015,
@@ -476,24 +488,35 @@ def train(df: pd.DataFrame):
         gamma=0.1,
         reg_alpha=0.05,
         reg_lambda=1.0,
-        scale_pos_weight=scale,
+        # No scale_pos_weight — it inflates all predictions toward 0.5.
+        # Use base_score = actual HR rate so the model starts from the right prior.
+        base_score=hr_rate,
         eval_metric="logloss",
         early_stopping_rounds=75,
         random_state=42,
-        device="cuda",           # RTX 5080 — dramatically faster than CPU
+        device="cuda",
         verbosity=0,
     )
-    model.fit(
-        X_tr, y_tr,
+    base_model.fit(
+        X_fit, y_fit,
         eval_set=[(X_te, y_te)],
         verbose=50,
     )
 
-    assess(model, X_tr, y_tr, X_te, y_te, df, train_mask)
+    # Isotonic calibration — maps raw XGBoost scores to real probabilities.
+    # Fit on the held-out calibration slice (not used to fit trees → no leakage).
+    print("\nCalibrating with isotonic regression...")
+    raw_cal = base_model.predict_proba(X_cal)[:, 1]
+    iso = IsotonicRegression(out_of_bounds="clip")
+    iso.fit(raw_cal, y_cal)
 
-    joblib.dump(model, "hr_model.pkl")
-    print("\nModel saved → hr_model.pkl")
-    return model
+    calibrated = CalibratedXGB(base_model, iso)
+
+    assess(calibrated, X_tr, y_tr, X_te, y_te, df, train_mask)
+
+    joblib.dump(calibrated, "hr_model.pkl")
+    print("\nModel saved → hr_model.pkl  (XGBoost + isotonic calibration)")
+    return calibrated
 
 
 if __name__ == "__main__":

@@ -1,0 +1,41 @@
+bookmaker,market,player,side,line,odds,implied_prob,home_team,away_team,starter,model_prob,edge
+pinnacle,batter_home_runs,Ezequiel Tovar,Over,0.5,615,14.0,Toronto Blue Jays,Colorado Rockies,Max Scherzer,11.4,-2.6
+pinnacle,batter_home_runs,Ivan Herrera,Over,0.5,611,14.1,St. Louis Cardinals,New York Mets,Kodai Senga,11.2,-2.9
+pinnacle,batter_home_runs,Andrew Benintendi,Over,0.5,558,15.2,Miami Marlins,Chicago White Sox,Janson Junk,8.9,-6.3
+pinnacle,batter_home_runs,Kazuma Okamoto,Over,0.5,552,15.3,Toronto Blue Jays,Colorado Rockies,Ryan Feltner,28.2,12.9
+pinnacle,batter_home_runs,Trent Grisham,Over,0.5,500,16.7,Seattle Mariners,New York Yankees,Logan Gilbert,10.8,-5.9
+pinnacle,batter_home_runs,Oneil Cruz,Over,0.5,496,16.8,Cincinnati Reds,Pittsburgh Pirates,Brandon Williamson,11.4,-5.4
+pinnacle,batter_home_runs,Noelvi Marte,Over,0.5,489,17.0,Cincinnati Reds,Pittsburgh Pirates,Bubba Chandler,11.4,-5.6
+pinnacle,batter_home_runs,Mike Trout,Over,0.5,455,18.0,Chicago Cubs,Los Angeles Angels,Jameson Taillon,10.9,-7.1
+pinnacle,batter_home_runs,Austin Riley,Over,0.5,420,19.2,Atlanta Braves,Athletics,Aaron Civale,15.5,-3.7
+pinnacle,batter_home_runs,Willy Adames,Over,0.5,409,19.6,San Diego Padres,San Francisco Giants,Germán Márquez,9.4,-10.2
+pinnacle,batter_home_runs,Kyle Tucker,Over,0.5,399,20.0,Los Angeles Dodgers,Cleveland Guardians,Tanner Bibee,11.2,-8.8
+pinnacle,batter_home_runs,Ketel Marte,Over,0.5,400,20.0,Arizona Diamondbacks,Detroit Tigers,Casey Mize,13.0,-7.0
+pinnacle,batter_home_runs,Matt Chapman,Over,0.5,397,20.1,San Diego Padres,San Francisco Giants,Germán Márquez,11.2,-8.9
+pinnacle,batter_home_runs,Adolis Garcia,Over,0.5,395,20.2,Philadelphia Phillies,Washington Nationals,PJ Poulin,8.5,-11.7
+pinnacle,batter_home_runs,Hunter Goodman,Over,0.5,385,20.6,Toronto Blue Jays,Colorado Rockies,Max Scherzer,11.2,-9.4
+pinnacle,batter_home_runs,George Springer,Over,0.5,382,20.7,Toronto Blue Jays,Colorado Rockies,Ryan Feltner,17.4,-3.3
+pinnacle,batter_home_runs,Matt Olson,Over,0.5,381,20.8,Atlanta Braves,Athletics,Aaron Civale,17.9,-2.9
+pinnacle,batter_home_runs,Giancarlo Stanton,Over,0.5,374,21.1,Seattle Mariners,New York Yankees,Logan Gilbert,13.8,-7.3
+pinnacle,batter_home_runs,Joc Pederson,Over,0.5,374,21.1,Baltimore Orioles,Texas Rangers,Zach Eflin,5.9,-15.2
+pinnacle,batter_home_runs,Max Muncy,Over,0.5,372,21.2,Los Angeles Dodgers,Cleveland Guardians,José Suarez,13.0,-8.2
+pinnacle,batter_home_runs,Pete Alonso,Over,0.5,371,21.2,Baltimore Orioles,Texas Rangers,Jacob deGrom,11.4,-9.8
+pinnacle,batter_home_runs,Colson Montgomery,Over,0.5,359,21.8,Miami Marlins,Chicago White Sox,Janson Junk,13.8,-8.0
+pinnacle,batter_home_runs,Sal Stewart,Over,0.5,358,21.8,Cincinnati Reds,Pittsburgh Pirates,Bubba Chandler,13.8,-8.0
+pinnacle,batter_home_runs,Ronald Acuna Jr.,Over,0.5,351,22.2,Atlanta Braves,Athletics,Aaron Civale,10.8,-11.4
+pinnacle,batter_home_runs,Marcell Ozuna,Over,0.5,349,22.3,Cincinnati Reds,Pittsburgh Pirates,Brandon Williamson,8.9,-13.4
+pinnacle,batter_home_runs,Brandon Nimmo,Over,0.5,348,22.3,Baltimore Orioles,Texas Rangers,Zach Eflin,11.4,-10.9
+pinnacle,batter_home_runs,Eugenio Suarez,Over,0.5,349,22.3,Cincinnati Reds,Pittsburgh Pirates,Bubba Chandler,10.9,-11.4
+pinnacle,batter_home_runs,Corbin Carroll,Over,0.5,341,22.7,Arizona Diamondbacks,Detroit Tigers,Casey Mize,15.5,-7.2
+pinnacle,batter_home_runs,James Wood,Over,0.5,340,22.7,Philadelphia Phillies,Washington Nationals,Andrew Painter,11.4,-11.3
+pinnacle,batter_home_runs,Brandon Lowe,Over,0.5,339,22.8,Cincinnati Reds,Pittsburgh Pirates,Brandon Williamson,12.5,-10.3
+pinnacle,batter_home_runs,Jake Burger,Over,0.5,328,23.4,Baltimore Orioles,Texas Rangers,Zach Eflin,11.4,-12.0
+pinnacle,batter_home_runs,Yordan Alvarez,Over,0.5,328,23.4,Houston Astros,Boston Red Sox,Brayan Bello,13.8,-9.6
+pinnacle,batter_home_runs,Kerry Carpenter,Over,0.5,324,23.6,Arizona Diamondbacks,Detroit Tigers,Brandon Pfaadt,8.5,-15.1
+pinnacle,batter_home_runs,Junior Caminero,Over,0.5,307,24.6,Milwaukee Brewers,Tampa Bay Rays,Brandon Woodruff,11.2,-13.4
+pinnacle,batter_home_runs,Bryce Harper,Over,0.5,297,25.2,Philadelphia Phillies,Washington Nationals,PJ Poulin,10.8,-14.4
+pinnacle,batter_home_runs,Aaron Judge,Over,0.5,277,26.5,Seattle Mariners,New York Yankees,Logan Gilbert,15.5,-11.0
+pinnacle,batter_home_runs,Corey Seager,Over,0.5,266,27.3,Baltimore Orioles,Texas Rangers,Zach Eflin,10.8,-16.5
+pinnacle,batter_home_runs,Rafael Devers,Over,0.5,257,28.0,San Diego Padres,San Francisco Giants,Germán Márquez,10.8,-17.2
+pinnacle,batter_home_runs,Kyle Schwarber,Over,0.5,228,30.5,Philadelphia Phillies,Washington Nationals,PJ Poulin,15.5,-15.0
+pinnacle,batter_home_runs,Shohei Ohtani,Over,0.5,176,36.2,Los Angeles Dodgers,Cleveland Guardians,Tanner Bibee,10.1,-26.1
